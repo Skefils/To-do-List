@@ -1,13 +1,13 @@
 window.addEventListener("load", async () => {
+  const apiKey = "4fd05367-8244-46ce-aeb4-06922ca042b1";
   const form = document.querySelector("#new-task-form");
   const input = document.querySelector("#new-task-input");
   const list_el = document.querySelector("#tasks");
 
+  /*   const inputValue = input.value; */
   const fetchTasks = async () => {
-    const apiUrl =
-      "https://js1-todo-api.vercel.app/api/todos?apikey=4fd05367-8244-46ce-aeb4-06922ca042b1";
-
     try {
+      const apiUrl = `https://js1-todo-api.vercel.app/api/todos?apikey=${apiKey}`;
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
@@ -15,6 +15,8 @@ window.addEventListener("load", async () => {
       }
 
       const tasksData = await response.json();
+
+      list_el.innerHTML = "";
 
       tasksData.forEach((taskData) => {
         const task_el = document.createElement("div");
@@ -27,7 +29,7 @@ window.addEventListener("load", async () => {
         const task_input_el = document.createElement("input");
         task_input_el.classList.add("text");
         task_input_el.type = "text";
-        task_input_el.value = taskData.text;
+        task_input_el.value = taskData.title;
         task_input_el.setAttribute("readonly", "readonly");
         task_content_el.appendChild(task_input_el);
 
@@ -67,7 +69,7 @@ window.addEventListener("load", async () => {
           task_edit_el.style.display = "inline-block";
           task_save_el.style.display = "none";
 
-          const updateApiUrl = `https://js1-todo-api.vercel.app/api/todos/${taskData.id}?apikey=4fd05367-8244-46ce-aeb4-06922ca042b1`;
+          const updateApiUrl = `https://js1-todo-api.vercel.app/api/todos/${taskData._id}?apikey=${apiKey}`;
 
           try {
             const updateResponse = await fetch(updateApiUrl, {
@@ -75,7 +77,7 @@ window.addEventListener("load", async () => {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ text: task_input_el.value }),
+              body: JSON.stringify({ title: task_input_el.value }),
             });
 
             if (!updateResponse.ok) {
@@ -89,7 +91,7 @@ window.addEventListener("load", async () => {
         task_delete_el.addEventListener("click", async () => {
           list_el.removeChild(task_el);
 
-          const deleteApiUrl = `https://js1-todo-api.vercel.app/api/todos/${taskData.id}?apikey=4fd05367-8244-46ce-aeb4-06922ca042b1`;
+          const deleteApiUrl = `https://js1-todo-api.vercel.app/api/todos/${taskData._id}?apikey=${apiKey}`;
 
           try {
             const deleteResponse = await fetch(deleteApiUrl, {
@@ -119,16 +121,13 @@ window.addEventListener("load", async () => {
       return;
     }
 
-    const apiUrl =
-      "https://js1-todo-api.vercel.app/api/todos?apikey=4fd05367-8244-46ce-aeb4-06922ca042b1";
+    const apiUrl = `https://js1-todo-api.vercel.app/api/todos?apikey=4fd05367-8244-46ce-aeb4-06922ca042b1`;
 
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: task }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: task, title: task }),
       });
 
       if (!response.ok) {
